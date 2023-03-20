@@ -1,10 +1,22 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 import time
 
 textset = ["цена зависит", "цену уточняйте", "цены зависят", "стоимость зависит", "цена варьируется",
 "стоимость варьируется", "на стоимость влияет", "на стоимость влияют", "на цену влияет",
 "на цену влияют", "от сезона", "от количества проживающих", "стоимость может меняться", "зависит от срока проживания",
-"сезона", "СТОИМОСТЬ АРЕНДЫ ЗАВИСИТ", "окончательную стоимость"]
+"сезона", "СТОИМОСТЬ АРЕНДЫ ЗАВИСИТ", "окончательную стоимость", "стоимость уточняйте", "ЦЕНУ уточняйте", "Стоимость проживания зависит", "Уточняйте стоимость",
+"Цена меняется, в зависимости от", "чем больше дней, тем меньше цена", "Цена может меняться", "Стоимость зависит", "Стоимость выше указана минимальная", 
+"стоимость выше указана минимальная", "Цену уточнять", "цену уточнять", "ценах, свободных датах пожалуйста уточняйте",
+"цены, свободные даты пожалуйста уточняйте", "стоимость проживания зависит", "Цена зависит",
+"Цены уточняйте", "Цена в объявлении может меняться", "Стоимость зависит", "Стоимость может меняться",
+"Цена может варьироваться", "Цена варьируется", "Цену уточнять", "цену уточнять", "Цена договорная", "цена договорная",
+"Цена может меняться", "Цена меняется", "Стоимость проживания зависит", "Цены и конкретные даты уточняйте",
+"Цену уточняйте"]
 
 driver = webdriver.Chrome('chromedriver.exe')
 driver.get("https://centiman.avito.ru/service-dataset-collector-frontend/login")
@@ -13,13 +25,13 @@ def aut():
 	login = "dtitov"
 	password = "evwaaAqRVwZd"
 
+	element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "//input[@type='text']")))
 	driver.find_element("xpath", "//input[@type='text']").send_keys(login)
 	driver.find_element("xpath", "//input[@type='password']").send_keys(password)
 
 	driver.find_element("xpath", "//div[@class='button']").click()
 
-	time.sleep(2)
-
+	element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "//*[@id='app']/main/div/div/div/div/a")))
 	driver.find_element("xpath", "//*[@id='app']/main/div/div/div/div/a").click()
 
 	time.sleep(2)
@@ -35,6 +47,7 @@ def ansclick(ans):
 
 
 def text_find(textset):
+	element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "/html/body/div/main/div/div[2]/div[3]/div[1]/div[8]/pre")))
 	text1 = driver.find_element("xpath", "/html/body/div/main/div/div[2]/div[3]/div[1]/div[8]/pre")
 	text1 = text1.text
 	for word in textset:
@@ -59,10 +72,12 @@ while True:
 
 	while True:
 		
+		element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "/html/body/div/main/div/div[2]/div[3]/div[1]/div[8]/pre")))
 		description_pred = driver.find_element("xpath", "/html/body/div/main/div/div[2]/div[3]/div[1]/div[8]/pre")
 
 		time.sleep(2)
 
+		element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "/html/body/div/main/div/div[2]/div[3]/div[1]/div[8]/pre")))
 		description_next = driver.find_element("xpath", "/html/body/div/main/div/div[2]/div[3]/div[1]/div[8]/pre")
 
 		if description_pred != description_next:
