@@ -16,7 +16,10 @@ textset = ["цена зависит", "цену уточняйте", "цены �
 "Цены уточняйте", "Цена в объявлении может меняться", "Стоимость зависит", "Стоимость может меняться",
 "Цена может варьироваться", "Цена варьируется", "Цену уточнять", "цену уточнять", "Цена договорная", "цена договорная",
 "Цена может меняться", "Цена меняется", "Стоимость проживания зависит", "Цены и конкретные даты уточняйте",
-"Цену уточняйте"]
+"Цену уточняйте", "количеcтва человeк", "стоимость и наличие свободной квартиры уточняйте", "Цен может отличаться",
+"Ценa зависит", "зависит от", "ЦЕНА зависит", "Цена аренды квартиры может", "В зависимости от", "в зависимости от",
+"Чтобы узнать стоимость", "Стоимость указана на текущие дни", "Актуальную стоимость", "актуальную стоимость", "уточняйте", "Уточняйте цены",
+"ЦЕНА ЗАВИСИТ", "Цена может меняться"]
 
 driver = webdriver.Chrome('chromedriver.exe')
 driver.get("https://centiman.avito.ru/service-dataset-collector-frontend/login")
@@ -38,11 +41,13 @@ def aut():
 
 def ansclick(ans):
 	if ans == 1:
+		element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "/html/body/div/main/div/div[2]/div[3]/div[1]/div[12]/div[2]/div[1]")))
 		driver.find_element("xpath", "/html/body/div/main/div/div[2]/div[3]/div[1]/div[12]/div[2]/div[1]").click()
 
 		#Нажатие кнопки Готово
 		driver.find_element("xpath", "/html/body/div/main/div/div[2]/div[3]/button").click()
 	elif ans == 2:
+		element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "/html/body/div/main/div/div[2]/div[3]/div[1]/div[12]/div[2]/div[2]")))
 		driver.find_element("xpath", "/html/body/div/main/div/div[2]/div[3]/div[1]/div[12]/div[2]/div[2]").click()
 
 
@@ -61,6 +66,30 @@ def text_find(textset):
 	elif result == 2:
 		ansclick(2)
 
+
+def price_mess():
+	time.sleep(1)
+	element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "//div[@class='row seller']/div")))
+	price = driver.find_element("xpath", "//*[@id='app']/main/div/div[2]/div[3]/div[1]/div[6]/pre")
+
+	element = WebDriverWait(driver, 10).until(ec.presence_of_element_located((By.XPATH, "//div[@class='row seller']")))
+	messages_seller = driver.find_elements("xpath", "//div[@class='row seller']/div")
+	price = price.text
+	price1 = str(int(price) + 1)
+	print(len(messages_seller))
+	for message in messages_seller:
+		message = message.text
+		if message.find(price) != -1 or message.find(price1) != -1:
+			result =1
+			break
+		else:
+			result = 2
+	if result == 1:
+		ansclick(1)
+	elif result == 2:
+		ansclick(2)
+
+
 #Запуск действий
 
 #Авторизация
@@ -69,6 +98,8 @@ aut()
 #Цикл проверок
 while True:
 	text_find(textset)
+
+	price_mess()
 
 	while True:
 		
